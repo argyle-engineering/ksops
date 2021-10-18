@@ -41,16 +41,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	if manifest.FailSilently {
-		os.Exit(0)
-	}
-
 	if manifest.Files == nil {
 		_, _ = fmt.Fprintf(os.Stderr, "missing the required 'files' key in the ksops manifests: %s", content)
 		os.Exit(1)
 	}
 
 	var output bytes.Buffer
+
+	failed := false
 
 	for _, file := range manifest.Files {
 
@@ -65,13 +63,24 @@ func main() {
 
 		format := formats.FormatForPath(file)
 		data, err = decrypt.DataWithFormat(b, format)
+
 		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "trouble decrypting file %s\n", err.Error())
-			os.Exit(1)
+			_, _ = fmt.Fprintf(os.Stderr, "failed decrypting file '%s': %s\n", file, err.Error())
+
+			if manifest.FailSilently {
+				failed = true
+			} else {
+				os.Exit(1)
+			}
 		}
 
 		output.Write(data)
 		output.WriteString("\n---\n")
+	}
+
+	// if we fail we never output anything
+	if failed {
+		os.Exit(0)
 	}
 
 	_, _ = fmt.Fprintf(os.Stdout, output.String())
