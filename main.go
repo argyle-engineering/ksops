@@ -83,6 +83,10 @@ func main() {
 
 func generateDummySecret(content []uint8) []byte {
 	var yamlData map[string]interface{}
+	var dummyString = map[string]string{
+		"stringData": "SECRET",
+		"data":       "U0VDUkVU",
+	}
 	yErr := yaml.Unmarshal(content, &yamlData)
 	if yErr != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "error unmarshalling manifest content: %q \n%s\n", yErr, content)
@@ -93,7 +97,7 @@ func generateDummySecret(content []uint8) []byte {
 		if k == "stringData" || k == "data" {
 			tempList := make(map[string]string)
 			for a, _ := range v.(map[string]interface{}) {
-				tempList[a] = "SECRET"
+				tempList[a] = dummyString[k]
 			}
 			yamlData[k] = tempList
 		}
