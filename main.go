@@ -65,28 +65,8 @@ func main() {
 
 		if err != nil {
 			if manifest.FailSilently {
-				var yamlData map[string]interface{}
-				yErr := yaml.Unmarshal(b, &yamlData)
-				if yErr != nil {
-					_, _ = fmt.Fprintf(os.Stderr, "error unmarshalling manifest content: %q \n%s\n", yErr, b)
-					os.Exit(1)
-				}
-				delete(yamlData, "sops")
-				for k, v := range yamlData {
-					if k == "stringData" || k == "data" {
-						tempList := make(map[string]string)
-						for a, _ := range v.(map[string]interface{}) {
-							tempList[a] = "SECRET"
-						}
-						yamlData[k] = tempList
-					}
-				}
-
-				dummyData, err := yaml.Marshal(&yamlData)
-				if err != nil {
-					_, _ = fmt.Fprintf(os.Stderr, "error: %q", err)
-				}
-				output.Write(dummyData)
+				dummySecret := generateDummySecret(b)
+				output.Write(dummySecret)
 				output.WriteString("\n---\n")
 			} else {
 				os.Exit(1)
@@ -99,4 +79,29 @@ func main() {
 
 	_, _ = fmt.Fprintf(os.Stdout, output.String())
 
+}
+
+func generateDummySecret(content []uint8) []byte {
+	var yamlData map[string]interface{}
+	yErr := yaml.Unmarshal(content, &yamlData)
+	if yErr != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "error unmarshalling manifest content: %q \n%s\n", yErr, content)
+		os.Exit(1)
+	}
+	delete(yamlData, "sops")
+	for k, v := range yamlData {
+		if k == "stringData" || k == "data" {
+			tempList := make(map[string]string)
+			for a, _ := range v.(map[string]interface{}) {
+				tempList[a] = "SECRET"
+			}
+			yamlData[k] = tempList
+		}
+	}
+
+	dummyData, err := yaml.Marshal(&yamlData)
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "error: %q", err)
+	}
+	return dummyData
 }
