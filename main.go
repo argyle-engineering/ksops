@@ -3,10 +3,11 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"go.mozilla.org/sops/v3/cmd/sops/formats"
-	"go.mozilla.org/sops/v3/decrypt"
 	"io/ioutil"
 	"os"
+
+	"go.mozilla.org/sops/v3/cmd/sops/formats"
+	"go.mozilla.org/sops/v3/decrypt"
 	"sigs.k8s.io/yaml"
 )
 
@@ -48,8 +49,6 @@ func main() {
 
 	var output bytes.Buffer
 
-	failed := false
-
 	for _, file := range manifest.Files {
 
 		var b, data []byte
@@ -65,10 +64,30 @@ func main() {
 		data, err = decrypt.DataWithFormat(b, format)
 
 		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "failed decrypting file '%s': %s\n", file, err.Error())
-
 			if manifest.FailSilently {
-				failed = true
+				var yamlData map[string]interface{}
+				yErr := yaml.Unmarshal(b, &yamlData)
+				if yErr != nil {
+					_, _ = fmt.Fprintf(os.Stderr, "error unmarshalling manifest content: %q \n%s\n", yErr, b)
+					os.Exit(1)
+				}
+				delete(yamlData, "sops")
+				for k, v := range yamlData {
+					if k == "stringData" || k == "data" {
+						tempList := make(map[string]string)
+						for a, _ := range v.(map[string]interface{}) {
+							tempList[a] = "SECRET"
+						}
+						yamlData[k] = tempList
+					}
+				}
+
+				dummyData, err := yaml.Marshal(&yamlData)
+				if err != nil {
+					_, _ = fmt.Fprintf(os.Stderr, "error: %q", err)
+				}
+				output.Write(dummyData)
+				output.WriteString("\n---\n")
 			} else {
 				os.Exit(1)
 			}
@@ -76,11 +95,6 @@ func main() {
 
 		output.Write(data)
 		output.WriteString("\n---\n")
-	}
-
-	// if we fail we never output anything
-	if failed {
-		os.Exit(0)
 	}
 
 	_, _ = fmt.Fprintf(os.Stdout, output.String())
