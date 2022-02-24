@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 
 	"go.mozilla.org/sops/v3/cmd/sops/formats"
 	"go.mozilla.org/sops/v3/decrypt"
@@ -12,8 +13,7 @@ import (
 )
 
 type resource struct {
-	Files        []string `json:"files,omitempty" yaml:"files,omitempty"`
-	FailSilently bool     `json:"fail-silently,omitempty" yaml:"fail-silently,omitempty"`
+	Files []string `json:"files,omitempty" yaml:"files,omitempty"`
 }
 
 func main() {
@@ -27,6 +27,8 @@ func main() {
 		_, _ = fmt.Fprintf(os.Stderr, "always invoke this via kustomize plugins, received too few args: %d\n", len(os.Args))
 		os.Exit(1)
 	}
+
+	isGenerateDummy, _ := strconv.ParseBool(os.Getenv("KSOPS_GENERATE_DUMMY_SECRETS"))
 
 	content, err := ioutil.ReadFile(os.Args[1])
 	if err != nil {
@@ -64,7 +66,7 @@ func main() {
 		data, err = decrypt.DataWithFormat(b, format)
 
 		if err != nil {
-			if manifest.FailSilently {
+			if isGenerateDummy {
 				dummySecret := generateDummySecret(b)
 				output.Write(dummySecret)
 				output.WriteString("\n---\n")
