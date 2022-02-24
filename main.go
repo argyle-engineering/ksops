@@ -28,7 +28,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	isGenerateDummy, _ := strconv.ParseBool(os.Getenv("KSOPS_GENERATE_DUMMY_SECRETS"))
+	generateDummyEnv := os.Getenv("KSOPS_GENERATE_DUMMY_SECRETS")
+	isGenerateDummy, envErr := strconv.ParseBool(generateDummyEnv)
+	if envErr != nil && len(generateDummyEnv) > 0 {
+		_, _ = fmt.Fprintf(os.Stderr, "error converting string to boolean, please use either false or true : %q\n", envErr)
+		os.Exit(1)
+	}
 
 	content, err := ioutil.ReadFile(os.Args[1])
 	if err != nil {
