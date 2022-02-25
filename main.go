@@ -13,7 +13,8 @@ import (
 )
 
 type resource struct {
-	Files []string `json:"files,omitempty" yaml:"files,omitempty"`
+	Files        []string `json:"files,omitempty" yaml:"files,omitempty"`
+	FailSilently bool     `json:"fail-silently,omitempty" yaml:"fail-silently,omitempty"`
 }
 
 func main() {
@@ -56,6 +57,8 @@ func main() {
 
 	var output bytes.Buffer
 
+	failed := false
+
 	for _, file := range manifest.Files {
 
 		var b, data []byte
@@ -71,10 +74,14 @@ func main() {
 		data, err = decrypt.DataWithFormat(b, format)
 
 		if err != nil {
-			if isGenerateDummy {
-				dummySecret := generateDummySecret(b)
-				output.Write(dummySecret)
-				output.WriteString("\n---\n")
+			if manifest.FailSilently {
+				if isGenerateDummy {
+					dummySecret := generateDummySecret(b)
+					output.Write(dummySecret)
+					output.WriteString("\n---\n")
+				} else {
+					failed = true
+				}
 			} else {
 				os.Exit(1)
 			}
@@ -82,6 +89,11 @@ func main() {
 
 		output.Write(data)
 		output.WriteString("\n---\n")
+	}
+
+	// if we fail we never output anything
+	if failed {
+		os.Exit(0)
 	}
 
 	_, _ = fmt.Fprintf(os.Stdout, output.String())
