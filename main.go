@@ -57,8 +57,6 @@ func main() {
 
 	var output bytes.Buffer
 
-	failed := false
-
 	for _, file := range manifest.Files {
 
 		var b, data []byte
@@ -80,20 +78,17 @@ func main() {
 					output.Write(dummySecret)
 					output.WriteString("\n---\n")
 				} else {
-					failed = true
+					_, _ = fmt.Fprintf(os.Stderr, "failed decrypting file '%s': %s\n", file, err.Error())
+					os.Exit(0)
 				}
 			} else {
+				_, _ = fmt.Fprintf(os.Stderr, "failed decrypting file '%s': %s\n", file, err.Error())
 				os.Exit(1)
 			}
 		}
 
 		output.Write(data)
 		output.WriteString("\n---\n")
-	}
-
-	// if we fail we never output anything
-	if failed {
-		os.Exit(0)
 	}
 
 	_, _ = fmt.Fprintf(os.Stdout, output.String())
