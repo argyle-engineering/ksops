@@ -72,19 +72,20 @@ func main() {
 		data, err = decrypt.DataWithFormat(b, format)
 
 		if err != nil {
-			if manifest.FailSilently {
-				if isGenerateDummy {
-					dummySecret := generateDummySecret(b)
-					output.Write(dummySecret)
-					output.WriteString("\n---\n")
-				} else {
+			if isGenerateDummy {
+				dummySecret := generateDummySecret(b)
+				output.Write(dummySecret)
+				output.WriteString("\n---\n")
+			} else {
+				if manifest.FailSilently {
 					_, _ = fmt.Fprintf(os.Stderr, "failed decrypting file '%s': %s\n", file, err.Error())
 					os.Exit(0)
+				} else {
+					_, _ = fmt.Fprintf(os.Stderr, "failed decrypting file '%s': %s\n", file, err.Error())
+					os.Exit(1)
 				}
-			} else {
-				_, _ = fmt.Fprintf(os.Stderr, "failed decrypting file '%s': %s\n", file, err.Error())
-				os.Exit(1)
 			}
+
 		}
 
 		output.Write(data)
