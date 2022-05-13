@@ -33,3 +33,13 @@ fail-silently: true
 files:
 - ./secret.enc.yaml
 ```
+
+## Generate Dummy Secret
+
+There is some case where our local machine don't have access to the decryptor key, but we still want ksops to just output or keep producing a secret with a dummy value in it. 
+
+With `fail-silently` set to `true`, ksops will outputing an `failed decrypting file` error message with 0 (zero) exit code. 
+
+In order to generate a dummy secret without error message above, we need to do 2 things :
+- set `fail-silently` to `true`
+- set `KSOPS_GENERATE_DUMMY_SECRETS` environment variable to `TRUE`. e.g `KSOPS_GENERATE_DUMMY_SECRETS=TRUE kustomize build --enable-alpha-plugins <dir>`
