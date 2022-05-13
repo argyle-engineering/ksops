@@ -36,7 +36,7 @@ files:
 
 ## Generate Dummy Secret
 
-There is some case where our local machine don't have access to the decryptor key, but we still want ksops to just output or keep producing a secret with a dummy value in it. 
+There is a case where our machine does not have an access to the decryptor key (i.e. our CICD), but we still want ksops to keep producing a secret with a placeholder 'secret' value in it.
 
 With `fail-silently` set to `true`, ksops will outputing an `failed decrypting file` error message with 0 (zero) exit code. 
 
