@@ -1,30 +1,53 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
-# Make sure to check the documentation at https://goreleaser.com
-before:
-  hooks:
-    # You may remove this if you don't use go modules.
-    - go mod tidy
-    # you may remove this if you don't need go generate
-    - go generate ./...
+project_name: argyle-kops
+env:
+  - GO111MODULE=on
 builds:
-  - env:
+  - id: ksops-darwin-amd64
+    binary: ksops
+    env:
       - CGO_ENABLED=0
+    main: ./cmd/ksops/main.go
+    goos:
+      - darwin
+    goarch:
+      - amd64
+
+  - id: ksops-darwin-arm64
+    binary: ksops
+    env:
+      - CGO_ENABLED=0
+    main: ./cmd/ksops/main.go
+    goos:
+      - darwin
+    goarch:
+      - arm64
+
+
+  - id: ksops-linux
+    binary: ksops
+    env:
+      - CGO_ENABLED=0
+    main: ./cmd/ksops/main.go
     goos:
       - linux
-      - darwin
+    goarch:
+      - amd64
+
 archives:
-  - replacements:
-      darwin: Darwin
+  - format: tar.gz
+    name_template: "{{ .Binary }}-v{{ .Version }}-{{ .ShortCommit }}-{{ .Os }}-{{ .Arch }}"
+    replacements:
+      amd64: x64
+      arm64: ARM64
+      darwin: macOS
       linux: Linux
-      386: i386
-      amd64: x86_64
+    allow_different_binary_count: true
+
+sboms:
+  - artifacts: binary
+
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "{{ .ProjectName }}_checksums.txt"
+
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
-changelog:
-  sort: asc
-  filters:
-    exclude:
-      - '^docs:'
-      - '^test:'
+  name_template: SNAPSHOT-{{.ShortCommit}}
