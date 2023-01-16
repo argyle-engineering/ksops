@@ -7,6 +7,7 @@ import (
 	"go.mozilla.org/sops/v3/cmd/sops/formats"
 	"go.mozilla.org/sops/v3/decrypt"
 	"os"
+	"path/filepath"
 	"sigs.k8s.io/kustomize/kyaml/fn/framework"
 	"sigs.k8s.io/kustomize/kyaml/fn/framework/command"
 	"sigs.k8s.io/kustomize/kyaml/kio"
@@ -37,25 +38,32 @@ func main() {
 				var spec schema.Spec
 				err = yaml.Unmarshal([]byte(item.MustString()), &spec)
 				if err != nil {
-					return nil, fmt.Errorf("unable to parse ksops spec: %w", err)
+					return nil, fmt.Errorf("unable to parse ksops spec: %w\n", err)
 				}
 
 				// Generate secrets here
 				for _, file := range spec.Files {
 
 					var b, secret []byte
-					//var b []byte
 
 					b, err = os.ReadFile(file)
 
+					// Sometimes we end up too deep in a directory
+					// So we change to the parent and search there as well
+					// #TODO figure out why this happens and fix it
 					if err != nil {
-						return nil, fmt.Errorf("error reading %s: %w", file, err)
+						cwd, _ := os.Getwd()
+						parent := filepath.Join(cwd, "..")
+						b, err = os.ReadFile(filepath.Join(parent, file))
+						if err != nil {
+							return nil, fmt.Errorf("error opening file for decryption %s: \n\n%w\n\n\n", file, err)
+						}
 					}
 
 					if ksopsGenerateDummySecrets {
 						secret, err = dummy.GenerateDummySecret(b)
 						if err != nil {
-							return nil, fmt.Errorf("failed generating dummy file %s: %w", file, err)
+							return nil, fmt.Errorf("failed generating dummy file %s: %w\n", file, err)
 						}
 					} else {
 						format := formats.FormatForPath(file)
@@ -68,7 +76,7 @@ func main() {
 					var node *yaml.RNode
 					node, err = yaml.Parse(string(secret))
 					if err != nil {
-						return nil, fmt.Errorf("failed parse secret into yaml file %s: %w", file, err)
+						return nil, fmt.Errorf("failed parse secret into yaml file %s: %w\n", file, err)
 					}
 
 					filteredItems = append(filteredItems, node)
