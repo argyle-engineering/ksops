@@ -31,7 +31,7 @@ If you want to test ksops without having to do a bunch of setup, you can use the
 
 Install gpg and sops and kustomize using brew (or figure it out if you're on Linux)
 ```shell
-brew install sops gnugpg kustomize
+brew install sops gnupg kustomize
 ```
 
 then:
@@ -42,3 +42,22 @@ kustomize build --enable-alpha-plugins --enable-exec example/
 ```
 
 This last step will decrypt example.yaml using the test private key.
+
+## Development
+
+To release a new version install `goreleaser` and set your GH token:
+
+```shell
+export GITHUB_TOKEN="YOUR_GH_TOKEN"
+```
+
+Now, create a tag and push it to GitHub:
+```shell
+git tag -a v0.1.0
+git push origin v0.1.0
+```
+
+then run:
+```shell
+goreleaser release
+```

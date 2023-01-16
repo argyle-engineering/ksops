@@ -31,19 +31,13 @@ func main() {
 		var filteredItems []*yaml.RNode
 		for i := range items {
 			item := items[i]
-			if item.GetKind() == "KSOPSGenerator" && item.GetApiVersion() == "argyle.com/v1" {
-
-				// Get the spec RNode
-				rawSpec := item.Field("spec")
-				if rawSpec == nil {
-					return nil, fmt.Errorf("no spec found in KSOPSGenerator")
-				}
+			if item.GetKind() == "ksops" && item.GetApiVersion() == "argyle.com/v1" {
 
 				// Get the spec yaml & unmarshal it
 				var spec schema.Spec
-				err = yaml.Unmarshal([]byte(rawSpec.Value.MustString()), &spec)
+				err = yaml.Unmarshal([]byte(item.MustString()), &spec)
 				if err != nil {
-					return nil, fmt.Errorf("unable to parse KSOPSGenerator spec: %w", err)
+					return nil, fmt.Errorf("unable to parse ksops spec: %w", err)
 				}
 
 				// Generate secrets here
@@ -88,8 +82,8 @@ func main() {
 	}
 
 	api := make(framework.GVKFilterMap)
-	api["KSOPSGenerator"] = make(map[string]kio.Filter)
-	api["KSOPSGenerator"]["argyle.com/v1"] = kio.FilterFunc(fn)
+	api["ksops"] = make(map[string]kio.Filter)
+	api["ksops"]["argyle.com/v1"] = kio.FilterFunc(fn)
 
 	p := framework.VersionedAPIProcessor{FilterProvider: api}
 	cmd := command.Build(&p, command.StandaloneDisabled, false)
