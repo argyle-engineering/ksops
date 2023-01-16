@@ -61,7 +61,7 @@ func main() {
 						format := formats.FormatForPath(file)
 						secret, err = decrypt.DataWithFormat(b, format)
 						if err != nil && !spec.FailSilently {
-							return nil, fmt.Errorf("failed decrypting file %s: %w -- %s", file, err, string(secret))
+							return nil, fmt.Errorf("failed decrypting file %s: \n\n%w\n\n", file, err)
 						}
 					}
 
