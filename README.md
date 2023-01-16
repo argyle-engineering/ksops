@@ -48,6 +48,10 @@ This last step will decrypt example.yaml using the test private key.
 To release a new version install `goreleaser` and set your GH token:
 
 ```shell
+brew install gorelaser syft 
+```
+
+```shell
 export GITHUB_TOKEN="YOUR_GH_TOKEN"
 ```
 
