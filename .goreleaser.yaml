@@ -35,7 +35,7 @@ builds:
 
 archives:
   - format: tar.gz
-    name_template: "{{ .Binary }}-v{{ .Version }}-{{ .ShortCommit }}-{{ .Os }}-{{ .Arch }}"
+    name_template: "{{ .Binary }}-v{{ .Version }}-{{ .Os }}-{{ .Arch }}"
     replacements:
       amd64: x64
       arm64: ARM64
