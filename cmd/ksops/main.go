@@ -48,15 +48,16 @@ func main() {
 
 					b, err = os.ReadFile(file)
 
-					// Sometimes we end up too deep in a directory
-					// So we change to the parent and search there as well
-					// #TODO figure out why this happens and fix it
+					// Current working dir bug
+					// see https://github.com/kubernetes-sigs/kustomize/issues/4347
+					// see https://github.com/kubernetes-sigs/kustomize/pull/4654
 					if err != nil {
 						cwd, _ := os.Getwd()
 						parent := filepath.Join(cwd, "..")
-						b, err = os.ReadFile(filepath.Join(parent, file))
+						file = filepath.Join(parent, file)
+						b, err = os.ReadFile(file)
 						if err != nil {
-							return nil, fmt.Errorf("error opening file for decryption %s: \n\n%w\n\n\n", file, err)
+							return nil, fmt.Errorf("error opening file for decryption %s: \n\n%w\n\ncwd: %s - file: %s\n", file, err, cwd, file)
 						}
 					}
 
