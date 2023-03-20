@@ -1,5 +1,10 @@
 # KSOPS 
 
+[![Lint Status](https://github.com/argyle-engineering/ksops/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/argyle-engineering/ksops/actions/workflows/golangci-lint.yml)
+
+[![fmt Status](https://github.com/argyle-engineering/ksops/actions/workflows/fmt.yaml/badge.svg)](https://github.com/argyle-engineering/ksops/actions/workflows/fmt.yaml)
+
+
 A Flexible Kustomize KRM based Plugin for SOPS Encrypted Resources.
 
 This is a completely new KRM based plugin with no affiliation with the [existing Go-based ksops plugin](https://github.com/viaduct-ai/kustomize-sops).
