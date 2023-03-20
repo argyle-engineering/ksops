@@ -1,19 +1,35 @@
-# KSOPS 
+# KSOPS
 
-[![Lint Status](https://github.com/argyle-engineering/ksops/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/argyle-engineering/ksops/actions/workflows/golangci-lint.yml)
+KSOPS is a flexible Kustomize KRM-based plugin for SOPS encrypted resources. This repository provides a completely new KRM-based plugin with no affiliation with the existing Go-based ksops plugin.
 
-[![fmt Status](https://github.com/argyle-engineering/ksops/actions/workflows/fmt.yaml/badge.svg)](https://github.com/argyle-engineering/ksops/actions/workflows/fmt.yaml)
+## Features
 
+- A flexible Kustomize KRM-based plugin for SOPS encrypted resources.
+- Provides the ability to fail silently if the generator fails to decrypt files.
+- Generates dummy secrets with the `KSOPS_GENERATE_DUMMY_SECRETS` environment variable.
+- Example files and PGP key are provided with the repository to test KSOPS.
 
-A Flexible Kustomize KRM based Plugin for SOPS Encrypted Resources.
+## Installation
 
-This is a completely new KRM based plugin with no affiliation with the [existing Go-based ksops plugin](https://github.com/viaduct-ai/kustomize-sops).
+To install KSOPS, download the binary and add it to your path. 
 
-##  Installation
-Download the binary and add it to your path.
+Additionally, if you are using non-KRM version, you also need to set the `XDG_CONFIG_HOME` environment variable in your shell. If the variable is not set, run the following command:
 
-## Fail silently (in case you want the generator to just skip files that it fails to decrypt)
-To allow it to fail silently just add the following to your generator:
+```shell
+echo "export XDG_CONFIG_HOME=\$HOME/.config" >> $HOME/(.zshrc|.bashrc)
+source $HOME/(.zshrc|.bashrc)
+```
+
+## Usage
+
+To use KSOPS, follow these steps:
+
+1. Import the GPG key: `gpg --import example/sops_functional_tests_key.asc`.
+2. Build and decrypt the example files: `kustomize build --enable-alpha-plugins --enable-exec example/`.
+
+To generate dummy secrets, set the `KSOPS_GENERATE_DUMMY_SECRETS` environment variable to `true`. For example: `KSOPS_GENERATE_DUMMY_SECRETS=TRUE kustomize build --enable-alpha-plugins <dir>`.
+
+To allow KSOPS to fail silently, add the following to the generator:
 
 ```yaml
 apiVersion: argyle.com/v1
@@ -25,48 +41,31 @@ files:
 - ./secret.enc.yaml
 ```
 
-## Dummy Secrets 
-
-In order to generate a dummy secrets, we need set `KSOPS_GENERATE_DUMMY_SECRETS` environment variable to `true`.
-e.g `KSOPS_GENERATE_DUMMY_SECRETS=TRUE kustomize build --enable-alpha-plugins <dir>`_
-
-
-## Example usage:
-If you want to test ksops without having to do a bunch of setup, you can use the example files and pgp key provided with the repository:
-
-Install gpg and sops and kustomize using brew (or figure it out if you're on Linux)
-```shell
-brew install sops gnupg kustomize
-```
-
-then:
-
-```shell
-gpg --import example/sops_functional_tests_key.asc
-kustomize build --enable-alpha-plugins --enable-exec example/
-```
-
-This last step will decrypt example.yaml using the test private key.
-
 ## Development
 
-To release a new version install `goreleaser` and set your GH token:
+To release a new version, install `goreleaser` and set your GitHub token:
 
 ```shell
-brew install gorelaser syft 
-```
-
-```shell
+brew install goreleaser syft 
 export GITHUB_TOKEN="YOUR_GH_TOKEN"
 ```
 
-Now, create a tag and push it to GitHub:
+Then, create a tag and push it to GitHub:
+
 ```shell
 git tag -a v0.1.0
 git push origin v0.1.0
 ```
 
-then run:
+Finally, run the following command:
+
 ```shell
 goreleaser release
 ```
+
+## Build Status
+
+The repository has the following badges to indicate the status of the build:
+
+- Lint Status: [![Lint Status](https://github.com/argyle-engineering/ksops/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/argyle-engineering/ksops/actions/workflows/golangci-lint.yml)
+- Fmt Status: [![fmt Status](https://github.com/argyle-engineering/ksops/actions/workflows/fmt.yaml/badge.svg)](https://github.com/argyle-engineering/ksops/actions/workflows/fmt.yaml)
