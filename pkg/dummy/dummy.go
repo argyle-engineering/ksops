@@ -19,7 +19,7 @@ func GenerateDummySecret(content []uint8) ([]byte, error) {
 	for k, v := range genericYaml {
 		if k == "stringData" || k == "data" {
 			tempList := make(map[string]string)
-			for a, _ := range v.(map[string]interface{}) {
+			for a := range v.(map[string]interface{}) {
 				tempList[a] = dummyString[k]
 			}
 			genericYaml[k] = tempList
