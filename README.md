@@ -63,9 +63,17 @@ Finally, run the following command:
 goreleaser release
 ```
 
+or use docker 
+
+```shell
+docker buildx build --platform linux/arm64,linux/amd64 -t ksops:v1.0.3 --push .
+```
+
 ## Build Status
 
 The repository has the following badges to indicate the status of the build:
 
 - Lint Status: [![Lint Status](https://github.com/argyle-engineering/ksops/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/argyle-engineering/ksops/actions/workflows/golangci-lint.yml)
 - Fmt Status: [![fmt Status](https://github.com/argyle-engineering/ksops/actions/workflows/fmt.yaml/badge.svg)](https://github.com/argyle-engineering/ksops/actions/workflows/fmt.yaml)
+
+
