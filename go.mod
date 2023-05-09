@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	go.mozilla.org/sops/v3 v3.7.3
-	sigs.k8s.io/kustomize/kyaml v0.14.1
+	sigs.k8s.io/kustomize/kyaml v0.14.2
 	sigs.k8s.io/yaml v1.3.0
 )
 
