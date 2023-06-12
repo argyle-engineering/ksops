@@ -7,7 +7,6 @@ import (
 	"go.mozilla.org/sops/v3/cmd/sops/formats"
 	"go.mozilla.org/sops/v3/decrypt"
 	"os"
-	"path/filepath"
 	"sigs.k8s.io/kustomize/kyaml/fn/framework"
 	"sigs.k8s.io/kustomize/kyaml/fn/framework/command"
 	"sigs.k8s.io/kustomize/kyaml/kio"
@@ -48,19 +47,6 @@ func main() {
 
 					b, err = os.ReadFile(file)
 
-					// Current working dir bug
-					// see https://github.com/kubernetes-sigs/kustomize/issues/4347
-					// see https://github.com/kubernetes-sigs/kustomize/pull/4654
-					if err != nil {
-						cwd, _ := os.Getwd()
-						parent := filepath.Join(cwd, "..")
-						file = filepath.Join(parent, file)
-						b, err = os.ReadFile(file)
-						if err != nil {
-							return nil, fmt.Errorf("error opening file for decryption %s: \n\n%w\n\ncwd: %s - file: %s\n", file, err, cwd, file)
-						}
-					}
-
 					if ksopsGenerateDummySecrets {
 						secret, err = dummy.GenerateDummySecret(b)
 						if err != nil {
@@ -96,6 +82,8 @@ func main() {
 
 	p := framework.VersionedAPIProcessor{FilterProvider: api}
 	cmd := command.Build(&p, command.StandaloneDisabled, false)
+	cmd.Version = "v1.0.4"
+	cmd.SetVersionTemplate("{{.Version}}\n")
 	command.AddGenerateDockerfile(cmd)
 	if err = cmd.Execute(); err != nil {
 		fmt.Printf("\nerror: %s\n", err)

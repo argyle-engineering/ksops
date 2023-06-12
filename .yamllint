@@ -1,0 +1,40 @@
+extends: default
+
+ignore: |
+  *.enc.*
+  ._*
+  *.env
+  *.sh
+  *.conf
+  *.lua
+
+rules:
+  # Forbid `---` at the beginning of each file
+  document-start:
+    present: false
+
+  # Disable line lenght, too annoying with third-party configs
+  line-length: disable
+
+  # Max 1 space after a hyphen `-`
+  hyphens:
+    max-spaces-after: 1
+
+  indentation:
+    # Requirement not to additionaly indent sequences. `-` is indentation!
+    #
+    # Accepted:
+    # sequence:
+    # - one
+    # - two
+    # - three
+    #
+    # Rejected:
+    # sequence:
+    #   - one
+    #   - two
+    #   - three
+    indent-sequences: false
+
+    # Indentation must be 2 spaces
+    spaces: 2
