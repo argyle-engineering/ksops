@@ -40,7 +40,9 @@ files:
 - ./secret.enc.yaml
 ```
 
-## Development
+## Release Process
+
+Current version: `v1.0.5`
 
 To release a new version, install `goreleaser` and set your GitHub token:
 

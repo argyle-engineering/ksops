@@ -82,7 +82,7 @@ func Execute() {
 
 	p := framework.VersionedAPIProcessor{FilterProvider: api}
 	cmd := command.Build(&p, command.StandaloneDisabled, false)
-	cmd.Version = "v1.0.4"
+	cmd.Version = "v1.0.5"
 	cmd.SetVersionTemplate("{{.Version}}\n")
 	command.AddGenerateDockerfile(cmd)
 	if err = cmd.Execute(); err != nil {
