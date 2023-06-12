@@ -1,6 +1,7 @@
 # KSOPS
 
 [![CI Status](https://github.com/argyle-engineering/ksops/actions/workflows/ci.yaml/badge.svg)](https://github.com/argyle-engineering/ksops/actions/workflows/ci.yaml)
+
 KSOPS is a flexible Kustomize KRM-based plugin for SOPS encrypted resources. This repository provides a completely new KRM-based plugin with no affiliation with the existing Go-based ksops plugin.
 
 ## Features
