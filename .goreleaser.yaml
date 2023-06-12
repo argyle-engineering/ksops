@@ -6,7 +6,7 @@ builds:
     binary: ksops
     env:
       - CGO_ENABLED=0
-    main: ./cmd/ksops/main.go
+    main: .
     goos:
       - darwin
     goarch:
@@ -16,7 +16,7 @@ builds:
     binary: ksops
     env:
       - CGO_ENABLED=0
-    main: ./cmd/ksops/main.go
+    main: .
     goos:
       - darwin
     goarch:
@@ -27,7 +27,7 @@ builds:
     binary: ksops
     env:
       - CGO_ENABLED=0
-    main: ./cmd/ksops/main.go
+    main: .
     goos:
       - linux
     goarch:
