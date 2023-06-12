@@ -3,11 +3,11 @@ name: CI
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       "**.go"
   pull_request:
-    branches: [main]
+    branches: [master]
     paths:
       "**.go"
 
