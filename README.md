@@ -1,5 +1,6 @@
 # KSOPS
 
+[![CI Status](https://github.com/argyle-engineering/ksops/actions/workflows/ci.yaml/badge.svg)](https://github.com/argyle-engineering/ksops/actions/workflows/ci.yaml)
 KSOPS is a flexible Kustomize KRM-based plugin for SOPS encrypted resources. This repository provides a completely new KRM-based plugin with no affiliation with the existing Go-based ksops plugin.
 
 ## Features
@@ -11,18 +12,11 @@ KSOPS is a flexible Kustomize KRM-based plugin for SOPS encrypted resources. Thi
 
 ## Installation
 
-To install KSOPS, download the binary and add it to your path. 
-
-Additionally, if you are using non-KRM version, you also need to set the `XDG_CONFIG_HOME` environment variable in your shell. If the variable is not set, run the following command:
-
-```shell
-echo "export XDG_CONFIG_HOME=\$HOME/.config" >> $HOME/(.zshrc|.bashrc)
-source $HOME/(.zshrc|.bashrc)
-```
+To install KSOPS, download the binary and add it to your path.
 
 ## Usage
 
-To use KSOPS, follow these steps:
+To use KSOPS example, follow these steps:
 
 1. Import the GPG key: `gpg --import example/sops_functional_tests_key.asc`.
 2. Build and decrypt the example files: `kustomize build --enable-alpha-plugins --enable-exec example/`.
@@ -36,6 +30,10 @@ apiVersion: argyle.com/v1
 kind: ksops
 metadata:
   name: secret-generator
+  annotations:
+    config.kubernetes.io/function: |2-
+      exec:
+        path: ksops  
 fail-silently: true
 files:
 - ./secret.enc.yaml
@@ -68,12 +66,4 @@ or use docker
 ```shell
 docker buildx build --platform linux/arm64,linux/amd64 -t ksops:v1.0.3 --push .
 ```
-
-## Build Status
-
-The repository has the following badges to indicate the status of the build:
-
-- Lint Status: [![Lint Status](https://github.com/argyle-engineering/ksops/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/argyle-engineering/ksops/actions/workflows/golangci-lint.yml)
-- Fmt Status: [![fmt Status](https://github.com/argyle-engineering/ksops/actions/workflows/fmt.yaml/badge.svg)](https://github.com/argyle-engineering/ksops/actions/workflows/fmt.yaml)
-
 

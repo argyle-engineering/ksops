@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ import (
 	"strconv"
 )
 
-func main() {
+func Execute() {
 
 	ke := os.Getenv("KSOPS_GENERATE_DUMMY_SECRETS")
 	if len(ke) == 0 { // env not set

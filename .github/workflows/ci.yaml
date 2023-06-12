@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      "**.go"
+  pull_request:
+    branches: [main]
+    paths:
+      "**.go"
+
+jobs:
+  run:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: true
+      matrix:
+        go: ['stable']
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go }}
+          check-latest: true
+
+      - name: Go Vet
+        run: go vet ./...
+
+      - name: Go Tidy
+        run: go mod tidy && git diff --exit-code
+
+      - name: Go Mod
+        run: go mod download
+
+      - name: Go Mod Verify
+        run: go mod verify
+
+      - name: Go Generate
+        run: go generate ./... && git diff --exit-code
+
+      - name: Go Build
+        run: go build -o /dev/null ./...
+
+      - name: Go Compile Tests
+        run: go test -exec /bin/true ./...
+
+      - name: Go Test
+        run: |
+          go test -v ./... -count=1 -race -shuffle=on
+
+      - name: Go Benchmark
+        run: go test -v -shuffle=on -run=- -bench=. -benchtime=1x ./...
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+
+      - name: Run govulncheck
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck -test ./...
