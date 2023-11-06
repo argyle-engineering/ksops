@@ -1,6 +1,6 @@
 module github.com/argyle-engineering/ksops
 
-go 1.20
+go 1.21
 
 require (
 	go.mozilla.org/sops/v3 v3.7.3
