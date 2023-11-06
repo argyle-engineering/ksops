@@ -1,4 +1,4 @@
-package schema
+package pkg
 
 type Spec struct {
 	APIVersion string `yaml:"apiVersion"`
