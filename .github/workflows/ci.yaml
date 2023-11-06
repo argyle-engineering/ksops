@@ -4,12 +4,10 @@ on:
   workflow_dispatch:
   push:
     branches: [master]
-    paths:
-      "**.go"
+    paths: "**.go"
   pull_request:
     branches: [master]
-    paths:
-      "**.go"
+    paths: "**.go"
 
 defaults:
   run:
@@ -24,51 +22,36 @@ jobs:
     name: CI
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
 
-    - name: Check out code
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    - name: Restore cached CI Dependencies
-      id: cache-ci-dependencies-restore
-      uses: actions/cache/restore@v3
-      with:
-        path: |
-          /usr/local/bin/gotestfmt
-        key: ${{ runner.os }}-ci-dependencies
+      - name: Install Go
+        id: cache-go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
 
-    - name: Install Go
-      id: cache-go
-      uses: actions/setup-go@v4
-      with:
-        go-version-file: 'go.mod'
+      - name: Go mod download
+        if: steps.cache-go.outputs.cache-hit != 'true'
+        run: go mod download -x
 
+      - name: Go Build
+        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /dev/null .
 
+      - name: Run tests
+        run: |
+          set -euo pipefail
+          go install github.com/gotesttools/gotestfmt/v2/cmd/gotestfmt@latest
+          go test -json -v ./... 2>&1 | tee /tmp/gotest.log | gotestfmt
 
-    - name: Go mod download
-      if: steps.cache-go.outputs.cache-hit != 'true'
-      run: go mod download -x
-
-    - name: Go Build
-      run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /dev/null .
-
-    - name: Run tests
-      uses: GoTestTools/gotestfmt-action@v2
-      with:
-        version: v2.0.0
-        org: GoTestTools
-        repo: gotestfmt
-      run: |
-        set -euo pipefail
-        go test -json -v ./... 2>&1 | tee /tmp/gotest.log | gotestfmt
-
-    - name: golangci-lint
-      uses: golangci/golangci-lint-action@v3
-      with:
-        args: "--timeout=2m"
-        skip-pkg-cache: true
-        skip-build-cache: true
-        skip-cache: true
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          args: "--timeout=2m"
+          skip-pkg-cache: true
+          skip-build-cache: true
+          skip-cache: true
