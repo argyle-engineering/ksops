@@ -1,53 +1,23 @@
-project_name: argyle-kops
-env:
-  - GO111MODULE=on
 builds:
-  - id: ksops-darwin-amd64
-    binary: ksops
-    env:
+  - env:
       - CGO_ENABLED=0
-    main: .
-    goos:
-      - darwin
-    goarch:
-      - amd64
-
-  - id: ksops-darwin-arm64
-    binary: ksops
-    env:
-      - CGO_ENABLED=0
-    main: .
-    goos:
-      - darwin
-    goarch:
-      - arm64
-
-
-  - id: ksops-linux
-    binary: ksops
-    env:
-      - CGO_ENABLED=0
-    main: .
     goos:
       - linux
-    goarch:
-      - amd64
+      - windows
+      - darwin
 
 archives:
   - format: tar.gz
-    name_template: "{{ .Binary }}-v{{ .Version }}-{{ .Os }}-{{ .Arch }}"
-    replacements:
-      amd64: x64
-      arm64: ARM64
-      darwin: macOS
-      linux: Linux
-    allow_different_binary_count: true
+    # this name template makes the OS and Arch compatible with the results of `uname`.
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # use zip for windows archives
+    format_overrides:
+      - goos: windows
+        format: zip
 
-sboms:
-  - artifacts: binary
-
-checksum:
-  name_template: "{{ .ProjectName }}_checksums.txt"
-
-snapshot:
-  name_template: SNAPSHOT-{{.ShortCommit}}
