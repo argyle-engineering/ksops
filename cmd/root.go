@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/argyle-engineering/ksops/pkg"
+	"github.com/argyle-engineering/ksops/v2/pkg"
 	"os"
 	"sigs.k8s.io/kustomize/kyaml/errors"
 	"sigs.k8s.io/kustomize/kyaml/fn/framework"
@@ -27,7 +27,7 @@ var rootCmd = &cobra.Command{
 
 		return errors.Wrap(err)
 	},
-	Version: "v2.0.1",
+	Version: "v2.0.2",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
