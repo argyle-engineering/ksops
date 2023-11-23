@@ -69,6 +69,7 @@ func Ksops(items []*yaml.RNode) ([]*yaml.RNode, error) {
 
 			var node *yaml.RNode
 			node, err = yaml.Parse(string(secret))
+			_ = node.SetAnnotations(map[string]string{"kustomize.config.k8s.io/needs-hash": "true"})
 			if err != nil {
 				return nil, fmt.Errorf("failed parse secret into yaml file %s: %w\n", file, err)
 			}
