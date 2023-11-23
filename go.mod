@@ -1,4 +1,4 @@
-module github.com/argyle-engineering/ksops
+module github.com/argyle-engineering/ksops/v2
 
 go 1.21
 
