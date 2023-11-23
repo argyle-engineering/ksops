@@ -42,7 +42,7 @@ files:
 
 ## Release Process
 
-Current version: `v1.0.8`
+Current version: `v2.0.0`
 
 To release a new version, install `goreleaser` and set your GitHub token:
 
