@@ -27,7 +27,7 @@ var rootCmd = &cobra.Command{
 
 		return errors.Wrap(err)
 	},
-	Version: "v2.0.5",
+	Version: "v2.0.6",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
