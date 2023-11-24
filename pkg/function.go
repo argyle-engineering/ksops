@@ -69,8 +69,10 @@ func Ksops(items []*yaml.RNode) ([]*yaml.RNode, error) {
 
 			var node *yaml.RNode
 			node, err = yaml.Parse(string(secret))
-			_ = node.SetAnnotations(map[string]string{"kustomize.config.k8s.io/needs-hash": "true"})
-			_ = node.SetAnnotations(map[string]string{"argocd.argoproj.io/sync-wave": "-3"})
+			currentAnnotations := node.GetAnnotations()
+			currentAnnotations["kustomize.config.k8s.io/needs-hash"] = "true"
+			currentAnnotations["argocd.argoproj.io/sync-wave"] = "-3"
+			_ = node.SetAnnotations(currentAnnotations)
 			if err != nil {
 				return nil, fmt.Errorf("failed parse secret into yaml file %s: %w\n", file, err)
 			}
