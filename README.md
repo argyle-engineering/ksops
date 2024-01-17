@@ -19,9 +19,11 @@ TL;DR
 
 For MacOS Arm64:
 
+```shell
 export BINARY_PATH=~/go/bin/
 
-`gh release download --clobber -R argyle-engineering/ksops --pattern ksops_Darwin_arm64.tar.gz && mkdir ksops && tar -xzvf ksops_Darwin_arm64.tar.gz -C ksops && chmod +x ksops/ksops && mv ksops/ksops $BINARY_PATH && rm -r ksops/ ksops_Darwin_arm64.tar.gz`
+gh release download --clobber -R argyle-engineering/ksops --pattern ksops_Darwin_arm64.tar.gz && mkdir ksops && tar -xzvf ksops_Darwin_arm64.tar.gz -C ksops && chmod +x ksops/ksops && mv ksops/ksops $BINARY_PATH && rm -r ksops/ ksops_Darwin_arm64.tar.gz
+```
 
 ## Usage
 
