@@ -1,3 +1,5 @@
+version: 1
+
 builds:
   - env:
       - CGO_ENABLED=0
@@ -5,6 +7,8 @@ builds:
       - linux
       - windows
       - darwin
+    ldflags:
+    - -s -w -X main.version=v{{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
 
 archives:
   - format: tar.gz
@@ -21,3 +25,9 @@ archives:
       - goos: windows
         format: zip
 
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
