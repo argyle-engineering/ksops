@@ -15,6 +15,14 @@ KSOPS is a flexible Kustomize KRM-based plugin for SOPS encrypted resources. Thi
 
 To install KSOPS, download the binary and add it to your path.
 
+TL;DR
+
+For MacOS Arm64:
+
+export BINARY_PATH=~/go/bin/
+
+`gh release download --clobber -R argyle-engineering/ksops --pattern ksops_Darwin_arm64.tar.gz && mkdir ksops && tar -xzvf ksops_Darwin_arm64.tar.gz -C ksops && chmod +x ksops/ksops && mv ksops/ksops $BINARY_PATH && rm -r ksops/ ksops_Darwin_arm64.tar.gz`
+
 ## Usage
 
 To use KSOPS example, follow these steps:
