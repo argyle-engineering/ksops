@@ -49,7 +49,7 @@ jobs:
           go test -json -v ./... 2>&1 | tee /tmp/gotest.log | gotestfmt
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v6
         with:
           args: "--timeout=2m"
           skip-pkg-cache: true
