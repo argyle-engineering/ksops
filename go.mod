@@ -3,7 +3,7 @@ module github.com/argyle-engineering/ksops/v2
 go 1.21
 
 require (
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	go.mozilla.org/sops/v3 v3.7.3
 	sigs.k8s.io/kustomize/kyaml v0.16.0
 	sigs.k8s.io/yaml v1.4.0
